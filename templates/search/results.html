@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Search Results - DoctorFinder{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Geolocation functionality
+    function getLocation() {
+        if (navigator.geolocation) {
+            document.getElementById('location-status').innerHTML = 
+                '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Getting your location...';
+            
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            document.getElementById('location-status').innerHTML = 
+                '<span class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Geolocation is not supported by this browser.</span>';
+        }
+    }
+
+    function showPosition(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        // Use the coordinates to find nearby locations
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`)
+            .then(response => response.json())
+            .then(data => {
+                let city = data.address.city || data.address.town || data.address.village || data.address.county || '';
+                
+                // Update the location field
+                const locationSelect = document.getElementById('location-select');
+                if (locationSelect) {
+                    // Try to find the city in the options
+                    let found = false;
+                    for (let i = 0; i < locationSelect.options.length; i++) {
+                        if (locationSelect.options[i].text.toLowerCase().includes(city.toLowerCase())) {
+                            locationSelect.selectedIndex = i;
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    // If not found in the dropdown, set the city in the text field
+                    if (!found && city) {
+                        document.getElementById('location-text').value = city;
+                    }
+                    
+                    document.getElementById('location-status').innerHTML = 
+                        '<span class="text-success"><i class="bi bi-geo-alt-fill me-2"></i>Location detected: ' + city + '</span>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching location details:', error);
+                document.getElementById('location-status').innerHTML = 
+                    '<span class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Error detecting your city.</span>';
+            });
+    }
+
+    function showError(error) {
+        let message = '';
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                message = "User denied the request for geolocation.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                message = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                message = "The request to get user location timed out.";
+                break;
+            case error.UNKNOWN_ERROR:
+                message = "An unknown error occurred.";
+                break;
+        }
+        document.getElementById('location-status').innerHTML = 
+            '<span class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>' + message + '</span>';
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Search Filters -->
+    <div class="card border-0 shadow-sm mb-4 search-box-wrapper">
+        <div class="card-body p-4">
+            <form action="{% url 'search:doctor_search' %}" method="get" class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label class="form-label">
+                        <i class="bi bi-heart-pulse text-primary me-2"></i>Specialization
+                    </label>
+                    <select name="specialization" class="form-select search-input">
+                        <option value="">All Specializations</option>
+                        {% for spec in specializations %}
+                        <option value="{{ spec.slug }}" {% if spec.slug == selected_specialization %}selected{% endif %}>
+                            {{ spec.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">
+                        <i class="bi bi-geo-alt text-primary me-2"></i>Location
+                    </label>
+                    <div class="input-group">
+                        <select name="location" id="location-select" class="form-select search-input">
+                            <option value="">All Locations</option>
+                            {% for loc in locations %}
+                            <option value="{{ loc }}" {% if loc == selected_location %}selected{% endif %}>
+                                {{ loc }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" onclick="getLocation()">
+                            <i class="bi bi-geo-alt"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" id="location-text" name="custom_location" value="">
+                    <small id="location-status" class="form-text mt-1"></small>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">
+                        <i class="bi bi-star text-primary me-2"></i>Minimum Rating
+                    </label>
+                    <select name="min_rating" class="form-select search-input">
+                        <option value="">Any Rating</option>
+                        {% for rating in "54321"|make_list %}
+                        <option value="{{ rating }}" {% if rating == selected_min_rating %}selected{% endif %}>
+                            {{ rating }}+ Stars
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary search-button">
+                        <i class="bi bi-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Results -->
+    {% if doctors %}
+    <div class="row g-4">
+        {% for doctor in doctors %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition-300">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="position-relative">
+                            <img src="{{ doctor.profile_picture.url|default:'/static/img/default-doctor.png' }}" 
+                                 alt="Dr. {{ doctor.user.get_full_name }}" 
+                                 class="rounded-circle me-3" 
+                                 style="width: 64px; height: 64px; object-fit: cover;">
+                            {% if doctor.verified %}
+                            <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1">
+                                <i class="bi bi-check-circle-fill text-white"></i>
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="h6 fw-bold mb-1">Dr. {{ doctor.user.get_full_name }}</h3>
+                            <p class="small text-muted mb-0">{{ doctor.specializations.first }}</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-1">
+                            {% for i in "12345"|make_list %}
+                            <i class="bi bi-star{% if forloop.counter <= doctor.average_rating %}-fill{% endif %} text-warning me-1"></i>
+                            {% endfor %}
+                            <span class="small text-muted ms-2">({{ doctor.total_reviews }})</span>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled mb-3">
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                            {{ doctor.clinic_city }}, {{ doctor.clinic_state }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-mortarboard text-primary me-2"></i>
+                            {{ doctor.qualification }}
+                        </li>
+                        <li>
+                            <i class="bi bi-calendar-check text-primary me-2"></i>
+                            {{ doctor.experience }}
+                        </li>
+                    </ul>
+                    <a href="{% url 'doctors:doctor_detail' doctor.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-person-badge me-2"></i>View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if doctors.has_other_pages %}
+    <nav class="mt-4" aria-label="Search results pages">
+        <ul class="pagination justify-content-center">
+            {% if doctors.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ doctors.previous_page_number }}{% if request.GET.specialization %}&specialization={{ request.GET.specialization }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}{% if request.GET.min_rating %}&min_rating={{ request.GET.min_rating }}{% endif %}" aria-label="Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in doctors.paginator.page_range %}
+            <li class="page-item {% if doctors.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if request.GET.specialization %}&specialization={{ request.GET.specialization }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}{% if request.GET.min_rating %}&min_rating={{ request.GET.min_rating }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endfor %}
+
+            {% if doctors.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ doctors.next_page_number }}{% if request.GET.specialization %}&specialization={{ request.GET.specialization }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}{% if request.GET.min_rating %}&min_rating={{ request.GET.min_rating }}{% endif %}" aria-label="Next">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- No Results Message -->
+    <div class="text-center py-5">
+        <div class="display-1 text-muted mb-4">
+            <i class="bi bi-search"></i>
+        </div>
+        <h2 class="h4 fw-bold text-muted mb-4">No doctors found matching your criteria</h2>
+        <p class="text-muted mb-4">Try adjusting your search filters or browse all doctors</p>
+        <a href="{% url 'search:doctor_search' %}" class="btn btn-primary">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>Reset Filters
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

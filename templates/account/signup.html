@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Sign Up - DoctorFinder{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <!-- Logo and Title -->
+                    <div class="text-center mb-4">
+                        <img src="{% static 'images/logo-simple.svg' %}" alt="DoctorFinder Logo" class="mb-4" style="height: 40px; width: auto;">
+                        <h1 class="h3 mb-3">Create Account</h1>
+                        <p class="text-muted">Join DoctorFinder to find the best healthcare professionals</p>
+                    </div>
+
+                    <!-- Social Signup Buttons -->
+                    {% get_providers as socialaccount_providers %}
+                    {% if socialaccount_providers %}
+                    <div class="mb-4">
+                        <div class="d-grid gap-2">
+                            {% for provider in socialaccount_providers %}
+                            {% if provider.id == "google" %}
+                            <a href="{% provider_login_url provider.id process='login' %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fab fa-google me-2"></i>Continue with Google
+                            </a>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="position-relative my-4">
+                            <hr>
+                            <p class="text-muted position-absolute top-50 start-50 translate-middle bg-white px-3">or</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Signup Form -->
+                    <form class="signup" method="POST" action="{% url 'account_signup' %}">
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Please correct the errors below:
+                            <ul class="mb-0 mt-2">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" name="email" class="form-control" id="id_email" 
+                                       placeholder="name@example.com" required>
+                            </div>
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_first_name" class="form-label">First Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" name="first_name" class="form-control" id="id_first_name" 
+                                           placeholder="First Name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_last_name" class="form-label">Last Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" name="last_name" class="form-control" id="id_last_name" 
+                                           placeholder="Last Name" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                <input type="text" name="username" class="form-control" id="id_username" 
+                                       placeholder="Choose a username" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" name="password1" class="form-control" id="id_password1" 
+                                       placeholder="Create a password" required>
+                            </div>
+                            <div class="form-text">
+                                <ul class="mb-0">
+                                    <li>At least 8 characters long</li>
+                                    <li>Must not be entirely numeric</li>
+                                    <li>Cannot be too similar to your personal information</li>
+                                    <li>Cannot be a commonly used password</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_password2" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" name="password2" class="form-control" id="id_password2" 
+                                       placeholder="Confirm your password" required>
+                            </div>
+                        </div>
+
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+
+                        <div class="d-grid mb-3">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+
+                        <div class="form-text text-center">
+                            By signing up, you agree to our 
+                            <a href="{% url 'pages:terms_of_service' %}" class="text-decoration-none">Terms of Service</a> and 
+                            <a href="{% url 'pages:privacy_policy' %}" class="text-decoration-none">Privacy Policy</a>.
+                        </div>
+                    </form>
+
+                    <!-- Sign In Link -->
+                    <div class="text-center mt-4">
+                        <p class="mb-0">Already have an account? 
+                            <a href="{% url 'account_login' %}" class="text-primary text-decoration-none">
+                                Sign in
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Help -->
+            <div class="text-center mt-4">
+                <p class="text-muted mb-0">
+                    Need help? <a href="{% url 'pages:contact' %}" class="text-primary text-decoration-none">Contact us</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

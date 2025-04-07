@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}{{ specialization.name }} Specialists - DoctorFinder{% endblock %}
+
+{% block meta_description %}Find the best {{ specialization.name }} specialists in India. Browse verified doctors, read patient reviews, and book appointments with top {{ specialization.name }} doctors.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Specialization Header -->
+    <div class="text-center mb-5">
+        <div class="display-1 text-primary mb-3">
+            <i class="bi bi-heart-pulse"></i>
+        </div>
+        <h1 class="display-5 fw-bold text-primary mb-3">{{ specialization.name }} Specialists</h1>
+        <p class="lead text-muted mb-4">{{ specialization.description|default:"Discover highly qualified and experienced doctors specializing in this field." }}</p>
+        <div class="d-flex justify-content-center">
+            <a href="{% url 'search:doctor_search' %}" class="btn btn-outline-primary me-2">
+                <i class="bi bi-search me-2"></i>Advanced Search
+            </a>
+            <a href="{% url 'doctors:specializations' %}" class="btn btn-link">
+                <i class="bi bi-list me-2"></i>All Specializations
+            </a>
+        </div>
+    </div>
+
+    <!-- Doctors List -->
+    {% if doctors %}
+    <div class="row g-4">
+        {% for doctor in doctors %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition-300">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="position-relative">
+                            <img src="{{ doctor.profile_picture.url|default:'/static/img/default-doctor.png' }}" 
+                                 alt="Dr. {{ doctor.user.get_full_name }}" 
+                                 class="rounded-circle me-3" 
+                                 style="width: 64px; height: 64px; object-fit: cover;">
+                            {% if doctor.verified %}
+                            <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1">
+                                <i class="bi bi-check-circle-fill text-white"></i>
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="h6 fw-bold mb-1">Dr. {{ doctor.user.get_full_name }}</h3>
+                            <p class="small text-muted mb-0">{{ doctor.qualification }}</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-1">
+                            {% for i in "12345"|make_list %}
+                            <i class="bi bi-star{% if forloop.counter <= doctor.avg_rating|default:0 %}-fill{% endif %} text-warning me-1"></i>
+                            {% endfor %}
+                            <span class="small text-muted ms-2">({{ doctor.total_reviews }})</span>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled mb-3">
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                            {{ doctor.clinic_city }}, {{ doctor.clinic_state }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-mortarboard text-primary me-2"></i>
+                            {{ doctor.qualification }}
+                        </li>
+                        <li>
+                            <i class="bi bi-calendar-check text-primary me-2"></i>
+                            {{ doctor.experience }} Experience
+                        </li>
+                    </ul>
+                    <a href="{% url 'doctors:doctor_detail' doctor.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-person-badge me-2"></i>View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if doctors.has_other_pages %}
+    <nav class="mt-4" aria-label="Specialization doctors pages">
+        <ul class="pagination justify-content-center">
+            {% if doctors.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ doctors.previous_page_number }}" aria-label="Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in doctors.paginator.page_range %}
+            <li class="page-item {% if doctors.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+
+            {% if doctors.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ doctors.next_page_number }}" aria-label="Next">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- No Results Message -->
+    <div class="text-center py-5">
+        <div class="display-1 text-muted mb-4">
+            <i class="bi bi-search"></i>
+        </div>
+        <h2 class="h4 fw-bold text-muted mb-4">No {{ specialization.name }} specialists found</h2>
+        <p class="text-muted mb-4">We couldn't find any doctors specializing in {{ specialization.name }} at the moment.</p>
+        <a href="{% url 'doctors:specializations' %}" class="btn btn-primary">
+            <i class="bi bi-list me-2"></i>Browse All Specializations
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- About Section -->
+    <div class="card border-0 shadow-sm mt-5">
+        <div class="card-body p-4">
+            <h2 class="h5 fw-bold mb-3">About {{ specialization.name }}</h2>
+            <p>{{ specialization.description|default:"This medical specialization focuses on the diagnosis, treatment, and prevention of diseases and disorders related to this specific area of medicine. Our platform connects you with verified specialists with extensive experience in this field." }}</p>
+            <h3 class="h6 fw-bold mb-2">When to See a {{ specialization.name }} Specialist</h3>
+            <p class="mb-0">If you're experiencing symptoms or conditions related to this area, consult with one of our qualified specialists for proper diagnosis and treatment options.</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

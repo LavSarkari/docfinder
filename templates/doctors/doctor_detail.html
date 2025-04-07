@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dr. {{ doctor.user.get_full_name }} | DoctorFinder{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Doctor Profile Header -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-lg-3 text-center text-lg-start mb-4 mb-lg-0">
+                    {% if doctor.profile_picture %}
+                        <img src="{{ doctor.profile_picture.url }}" alt="{{ doctor.user.get_full_name }}" class="rounded-circle img-fluid" style="width: 200px; height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default-profile.svg' %}" alt="{{ doctor.user.get_full_name }}" class="rounded-circle img-fluid" style="width: 200px; height: 200px; object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="col-lg-9">
+                    <div class="d-flex align-items-center mb-2">
+                        <h2 class="mb-0">Dr. {{ doctor.user.get_full_name }}</h2>
+                        {% if doctor.verified %}
+                            <span class="badge bg-success ms-3"><i class="bi bi-patch-check-fill me-1"></i> Verified</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted mb-3">
+                        {% for spec in doctor.specializations.all %}
+                            <span class="badge bg-light text-dark me-1">{{ spec.name }}</span>
+                        {% endfor %}
+                    </p>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-2">
+                            {% for i in '12345'|make_list %}
+                                {% if forloop.counter <= doctor.average_rating %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="text-muted">({{ doctor.total_reviews }} reviews)</span>
+                    </div>
+                    <div class="d-flex flex-wrap">
+                        <div class="me-4 mb-3">
+                            <i class="bi bi-hospital me-2 text-primary"></i>
+                            {{ doctor.experience }} years experience
+                        </div>
+                        <div class="me-4 mb-3">
+                            <i class="bi bi-currency-rupee me-2 text-primary"></i>
+                            ₹{{ doctor.consultation_fee }} consultation fee
+                        </div>
+                        <div class="me-4 mb-3">
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>
+                            {{ doctor.clinic_city }}, {{ doctor.clinic_state }}
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="#location" class="btn btn-primary me-2">
+                            <i class="bi bi-geo-alt me-2"></i>View Location
+                        </a>
+                        <a href="#reviews" class="btn btn-outline-primary">
+                            <i class="bi bi-star me-2"></i>Write a Review
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Doctor Information -->
+        <div class="col-lg-8 mb-4 mb-lg-0">
+            <!-- About Doctor -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>About Dr. {{ doctor.user.get_full_name }}</h5>
+                </div>
+                <div class="card-body">
+                    {{ doctor.bio|safe }}
+                </div>
+            </div>
+
+            <!-- Professional Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i>Professional Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Qualification</h6>
+                            <p>{{ doctor.qualification }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Registration Number</h6>
+                            <p>{{ doctor.registration_number }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Experience</h6>
+                            <p>{{ doctor.experience }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Consultation Fee</h6>
+                            <p>₹{{ doctor.consultation_fee }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clinic Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-hospital me-2"></i>Clinic Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Clinic Address</h6>
+                            <p>{{ doctor.clinic_address }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Location</h6>
+                            <p>{{ doctor.clinic_city }}, {{ doctor.clinic_state }} - {{ doctor.clinic_pincode }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Available Days</h6>
+                            <p>{{ doctor.available_days }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Available Hours</h6>
+                            <p>{{ doctor.available_hours }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="card border-0 shadow-sm mb-4" id="reviews">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-star me-2"></i>Patient Reviews</h5>
+                    <a href="#write-review" class="btn btn-sm btn-primary">Write a Review</a>
+                </div>
+                <div class="card-body">
+                    {% if reviews %}
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center">
+                                <h4 class="me-3 mb-0">{{ doctor.average_rating }}</h4>
+                                <div>
+                                    <div>
+                                        {% for i in '12345'|make_list %}
+                                            {% if forloop.counter <= doctor.average_rating %}
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">Based on {{ doctor.total_reviews }} reviews</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        {% for review in reviews %}
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    {% if review.user.profile_picture %}
+                                        <img src="{{ review.user.profile_picture.url }}" alt="{{ review.user.get_full_name }}" class="rounded-circle" width="50" height="50">
+                                    {% else %}
+                                        <img src="{% static 'images/default-profile.svg' %}" alt="{{ review.user.get_full_name }}" class="rounded-circle" width="50" height="50">
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">{{ review.user.get_full_name }}</h6>
+                                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                    <div class="mb-1">
+                                        {% for i in '12345'|make_list %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if review.verified_visit %}
+                                            <span class="badge bg-success ms-2">Verified Visit</span>
+                                        {% endif %}
+                                    </div>
+                                    <h6 class="mt-2">{{ review.title }}</h6>
+                                    <p class="mb-0">{{ review.comment }}</p>
+                                </div>
+                            </div>
+                            {% if not forloop.last %}
+                                <hr>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <img src="{% static 'images/empty-reviews.svg' %}" alt="No reviews" class="img-fluid mb-3" style="max-width: 200px;">
+                            <h5>No Reviews Yet</h5>
+                            <p class="text-muted">Be the first to review Dr. {{ doctor.user.get_full_name }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Write a Review -->
+            <div class="card border-0 shadow-sm" id="write-review">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Write a Review</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                        {% if user.is_doctor and user.doctor.pk == doctor.pk %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-info-circle" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3">Cannot Review Yourself</h5>
+                                <p class="text-muted">You cannot write a review for your own profile.</p>
+                            </div>
+                        {% else %}
+                            <form method="post" action="{% url 'reviews:add_review' doctor.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <div class="rating-input">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rating" id="rating1" value="1" required>
+                                            <label class="form-check-label" for="rating1">1</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rating" id="rating2" value="2">
+                                            <label class="form-check-label" for="rating2">2</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rating" id="rating3" value="3">
+                                            <label class="form-check-label" for="rating3">3</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rating" id="rating4" value="4">
+                                            <label class="form-check-label" for="rating4">4</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rating" id="rating5" value="5">
+                                            <label class="form-check-label" for="rating5">5</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Your Review</label>
+                                    <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-shield-lock" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">Login Required</h5>
+                            <p class="text-muted">Please login to write a review</p>
+                            <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn btn-primary">Login to Write a Review</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <div class="col-lg-4">
+            <!-- Location Map -->
+            <div class="card border-0 shadow-sm mb-4" id="location">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Location</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Clinic Address</h6>
+                        <p class="mb-3">{{ doctor.clinic_address }}, {{ doctor.clinic_city }}, {{ doctor.clinic_state }} - {{ doctor.clinic_pincode }}</p>
+                    </div>
+                    <div class="map-container mb-3" style="height: 250px; background-color: #f8f9fa; border-radius: 8px; overflow: hidden;">
+                        <!-- Embed a placeholder map for development -->
+                        <div class="ratio ratio-16x9 h-100">
+                            <iframe 
+                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q={{ doctor.clinic_address|urlencode }},{{ doctor.clinic_city|urlencode }},{{ doctor.clinic_state|urlencode }}" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ doctor.clinic_address|urlencode }}+{{ doctor.clinic_city|urlencode }}+{{ doctor.clinic_state|urlencode }}+{{ doctor.clinic_pincode|urlencode }}" class="btn btn-primary" target="_blank">
+                            <i class="bi bi-map me-2"></i>Get Directions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor Availability -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Availability</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">Available Days</h6>
+                    <div class="mb-4">
+                        {% for day in doctor.get_available_days %}
+                            <span class="badge bg-light text-dark p-2 mb-1 me-1">{{ day }}</span>
+                        {% endfor %}
+                    </div>
+                    <h6 class="mb-3">Available Hours</h6>
+                    <div>
+                        {% for hour in doctor.get_available_hours %}
+                            <span class="badge bg-light text-dark p-2 mb-1 me-1">{{ hour }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Doctor -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-envelope me-2"></i>Contact</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="mailto:{{ doctor.user.email }}" class="btn btn-outline-primary">
+                            <i class="bi bi-envelope me-2"></i>Email Doctor
+                        </a>
+                        {% if doctor.user.phone_number %}
+                            <a href="tel:{{ doctor.user.phone_number }}" class="btn btn-outline-primary">
+                                <i class="bi bi-telephone me-2"></i>Call Doctor
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

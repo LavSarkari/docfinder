@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results for "{{ query }}" - DoctorFinder{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h1 class="h2 mb-3">Search Results for "{{ query }}"</h1>
+        
+        <!-- Search Form -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <form action="{% url 'search:global_search' %}" method="get" class="row g-3 align-items-end">
+                    <div class="col-md-9">
+                        <label for="q" class="form-label">Search Again</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search text-primary"></i></span>
+                            <input type="text" class="form-control" id="q" name="q" value="{{ query }}" 
+                                   placeholder="Search for doctors, specializations, locations...">
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Results Overview -->
+        {% if query %}
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3">
+                    <i class="bi bi-person-badge me-1"></i> {{ doctor_count }} Doctors
+                </span>
+                <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3">
+                    <i class="bi bi-clipboard2-pulse me-1"></i> {{ specialization_count }} Specializations
+                </span>
+                <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3">
+                    <i class="bi bi-geo-alt me-1"></i> {{ location_count }} Locations
+                </span>
+            </div>
+        {% endif %}
+        
+        <!-- Doctors Section -->
+        {% if doctors %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent py-3">
+                    <h2 class="h5 mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>Doctors ({{ doctor_count }})</h2>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for doctor in doctors %}
+                            <div class="list-group-item p-3">
+                                <div class="row g-3">
+                                    <div class="col-md-2 col-lg-1">
+                                        {% if doctor.profile_picture %}
+                                            <img src="{{ doctor.profile_picture.url }}" alt="Dr. {{ doctor.user.get_full_name }}" 
+                                                 class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                                                 style="width: 60px; height: 60px;">
+                                                <i class="bi bi-person-circle fs-3 text-primary"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-10 col-lg-11">
+                                        <h3 class="h6 mb-1">
+                                            <a href="{% url 'doctors:doctor_detail' doctor.pk %}" class="text-decoration-none">
+                                                Dr. {{ doctor.user.get_full_name }}
+                                                {% if doctor.verified %}
+                                                    <i class="bi bi-patch-check-fill text-primary ms-1" title="Verified"></i>
+                                                {% endif %}
+                                            </a>
+                                        </h3>
+                                        <p class="small text-muted mb-2">
+                                            {% for specialization in doctor.specializations.all|slice:":3" %}
+                                                <span class="badge bg-light text-dark me-1">{{ specialization.name }}</span>
+                                            {% endfor %}
+                                        </p>
+                                        <div class="d-flex flex-wrap gap-3 small">
+                                            <span><i class="bi bi-geo-alt text-primary me-1"></i>{{ doctor.clinic_city }}, {{ doctor.clinic_state }}</span>
+                                            <span><i class="bi bi-mortarboard text-primary me-1"></i>{{ doctor.qualification }}</span>
+                                            <span><i class="bi bi-calendar-check text-primary me-1"></i>{{ doctor.experience }}+ Years Experience</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if doctor_count > 5 %}
+                    <div class="card-footer bg-transparent text-center">
+                        <a href="{% url 'search:doctor_search' %}?q={{ query }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-list me-1"></i>View All Doctors
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <!-- Specializations Section -->
+        {% if specializations %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent py-3">
+                    <h2 class="h5 mb-0"><i class="bi bi-clipboard2-pulse me-2 text-primary"></i>Specializations ({{ specialization_count }})</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for specialization in specializations %}
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="{{ specialization.icon|default:'bi bi-clipboard2-pulse' }} text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="h6 mb-1">
+                                                    <a href="{% url 'search:specialization_search' specialization.slug %}" class="text-decoration-none">
+                                                        {{ specialization.name }}
+                                                    </a>
+                                                </h3>
+                                                <p class="small text-muted mb-0">
+                                                    {{ specialization.doctor_set.count }} Doctors
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if specialization_count > 5 %}
+                    <div class="card-footer bg-transparent text-center">
+                        <a href="{% url 'doctors:specializations' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-list me-1"></i>View All Specializations
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <!-- Locations Section -->
+        {% if locations %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent py-3">
+                    <h2 class="h5 mb-0"><i class="bi bi-geo-alt me-2 text-primary"></i>Locations ({{ location_count }})</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for location in locations %}
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-geo-alt text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="h6 mb-1">
+                                                    <a href="{% url 'search:doctor_search' %}?location={{ location.clinic_city|default:'' }}%20{{ location.clinic_state|default:'' }}" class="text-decoration-none">
+                                                        {{ location.clinic_city|default:'' }}{% if location.clinic_city and location.clinic_state %}, {% endif %}{{ location.clinic_state|default:'' }}
+                                                    </a>
+                                                </h3>
+                                                <p class="small text-muted mb-0">
+                                                    {{ location.count }} Doctors
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- No Results -->
+        {% if not doctors and not specializations and not locations and query %}
+            <div class="text-center py-5">
+                <div class="empty-search-placeholder mb-4"></div>
+                <h2 class="h4 mb-3">No results found for "{{ query }}"</h2>
+                <p class="text-muted mb-0">Try different keywords or check your spelling.</p>
+            </div>
+        {% endif %}
+        
+        <!-- No Query -->
+        {% if not query %}
+            <div class="text-center py-5">
+                <div class="search-placeholder mb-4"></div>
+                <h2 class="h4 mb-3">Enter your search query</h2>
+                <p class="text-muted mb-0">Search for doctors, specializations, or locations.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

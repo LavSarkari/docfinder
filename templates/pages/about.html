@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - DoctorFinder{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">About DoctorFinder</h1>
+        <p class="lead text-muted">Connecting patients with the best healthcare professionals in India</p>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="h3 mb-4">Our Mission</h2>
+            <p class="lead mb-4">To make quality healthcare accessible to everyone by connecting patients with verified doctors across India.</p>
+            <p>We believe that finding the right doctor should be simple, transparent, and trustworthy. Our platform helps patients make informed decisions about their healthcare by providing comprehensive information about doctors, their qualifications, and patient reviews.</p>
+        </div>
+        <div class="col-lg-6">
+            <div class="bg-primary bg-opacity-10 p-5 rounded-3 text-center">
+                <img src="{% static 'images/hero-image.svg' %}" alt="Our Mission" class="img-fluid" style="max-height: 250px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Values Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="h3">Our Core Values</h2>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-shield-check fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Trust & Transparency</h3>
+                    <p class="text-muted mb-0">We verify all doctors and maintain transparency in reviews and ratings.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-person-heart fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Patient-Centric</h3>
+                    <p class="text-muted mb-0">We prioritize patient needs and ensure a seamless healthcare experience.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-globe2 fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="h5 mb-3">Accessibility</h3>
+                    <p class="text-muted mb-0">We make quality healthcare accessible to everyone across India.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="h3">Our Team</h2>
+            <p class="text-muted">Meet the people behind DoctorFinder</p>
+        </div>
+        {% if team_members %}
+            {% for member in team_members %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        {% if member.profile_picture %}
+                            <img src="{{ member.profile_picture.url }}" alt="{{ member.name }}" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-person-circle fs-1 text-primary"></i>
+                            </div>
+                        {% endif %}
+                        <h3 class="h5 mb-1">{{ member.name }}</h3>
+                        <p class="text-muted mb-3">{{ member.position }}</p>
+                        <p class="small text-muted mb-0">{{ member.bio }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Default Team Members if no entries in database -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-person-circle fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="h5 mb-1">John Doe</h3>
+                        <p class="text-muted mb-3">Founder & CEO</p>
+                        <p class="small text-muted mb-0">With over 15 years of experience in healthcare technology, John leads our mission to transform healthcare access in India.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-person-circle fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="h5 mb-1">Jane Smith</h3>
+                        <p class="text-muted mb-3">Medical Director</p>
+                        <p class="small text-muted mb-0">A practicing physician with expertise in healthcare quality and patient safety.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-person-circle fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="h5 mb-1">Mike Johnson</h3>
+                        <p class="text-muted mb-3">Technology Lead</p>
+                        <p class="small text-muted mb-0">Expert in building scalable healthcare platforms with a focus on user experience.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- CTA Section -->
+    <div class="text-center py-5 bg-light rounded-3 mt-5">
+        <h2 class="h3 mb-4">Join Our Mission</h2>
+        <p class="lead mb-4">Whether you're a doctor or a patient, we'd love to have you on board.</p>
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+            <a href="{% url 'doctors:doctor_registration' %}" class="btn btn-primary">
+                <i class="bi bi-hospital me-2"></i>Register as Doctor
+            </a>
+            <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">
+                <i class="bi bi-person-plus me-2"></i>Create Account
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

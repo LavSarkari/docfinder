@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}DoctorFinder - Find the Best Doctors in India{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Geolocation functionality
+    function getLocation() {
+        if (navigator.geolocation) {
+            document.getElementById('location-btn').innerHTML = 
+                '<span class="spinner-border spinner-border-sm" role="status"></span>';
+            
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function showPosition(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        // Use the coordinates to find nearby locations
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`)
+            .then(response => response.json())
+            .then(data => {
+                let city = data.address.city || data.address.town || data.address.village || data.address.county || '';
+                
+                // Update the location field
+                document.getElementById('location-input').value = city;
+                document.getElementById('location-btn').innerHTML = '<i class="bi bi-geo-alt-fill text-success"></i>';
+                document.getElementById('location-input').classList.add('bg-success-subtle');
+                
+                setTimeout(() => {
+                    document.getElementById('location-input').classList.remove('bg-success-subtle');
+                    document.getElementById('location-btn').innerHTML = '<i class="bi bi-geo-alt"></i>';
+                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error fetching location details:', error);
+                document.getElementById('location-btn').innerHTML = '<i class="bi bi-geo-alt"></i>';
+                alert("Error detecting your location. Please enter your city manually.");
+            });
+    }
+
+    function showError(error) {
+        document.getElementById('location-btn').innerHTML = '<i class="bi bi-geo-alt"></i>';
+        let message = '';
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                message = "You denied the request for location permission.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                message = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                message = "The request to get your location timed out.";
+                break;
+            case error.UNKNOWN_ERROR:
+                message = "An unknown error occurred.";
+                break;
+        }
+        alert(message);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary bg-gradient py-5 position-relative overflow-hidden">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M25,0 L30,0 L30,25 L55,25 L55,30 L30,30 L30,55 L25,55 L25,30 L0,30 L0,25 L25,25 Z\' fill=\'%23ffffff\' fill-opacity=\'0.05\'/%3E%3C/svg%3E'); opacity: 0.1;"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-4">Find the Best Doctors Near You</h1>
+                <p class="lead text-white-50 mb-4">Search through thousands of verified doctors across India. Read reviews, check qualifications, and book appointments with ease.</p>
+                <div class="card border-0 shadow-lg rounded-4 search-box-wrapper">
+                    <div class="card-body p-3">
+                        <form action="{% url 'search:doctor_search' %}" method="get">
+                            <div class="d-flex flex-column flex-md-row gap-2 search-group">
+                                <div class="flex-grow-1 mb-2 mb-md-0 search-input-wrapper">
+                                    <div class="d-flex align-items-center bg-light rounded-3 px-3 h-100">
+                                        <i class="bi bi-heart-pulse text-primary me-2"></i>
+                                        <input type="text" name="specialization" class="form-control border-0 bg-transparent shadow-none search-input" placeholder="Specialization">
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 mb-2 mb-md-0 search-input-wrapper">
+                                    <div class="d-flex align-items-center bg-light rounded-3 px-3 h-100">
+                                        <i class="bi bi-geo-alt text-primary me-2"></i>
+                                        <input type="text" id="location-input" name="custom_location" class="form-control border-0 bg-transparent shadow-none search-input" placeholder="City or State">
+                                        <button type="button" id="location-btn" class="btn btn-link text-primary p-0 border-0" onclick="getLocation()">
+                                            <i class="bi bi-geo-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-4 rounded-3 d-flex align-items-center justify-content-center search-button">
+                                    <i class="bi bi-search"></i>
+                                    <span class="ms-2">Search</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <img src="{% static 'images/hero-image.svg' %}" alt="Doctor consultation" class="img-fluid rounded-4" style="max-height: 400px;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold mb-3">Why Choose DoctorFinder?</h2>
+            <p class="lead text-muted">We make finding the right doctor easy and reliable</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5 text-center">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="bi bi-person-check fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">Verified Doctors</h3>
+                        <p class="text-muted mb-0">All doctors on our platform are verified professionals with valid registrations and credentials.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5 text-center">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="bi bi-star fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">Genuine Reviews</h3>
+                        <p class="text-muted mb-0">Read authentic reviews and ratings from verified patients to make informed decisions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5 text-center">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="bi bi-geo fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">Pan India Coverage</h3>
+                        <p class="text-muted mb-0">Find qualified doctors across India, from major cities to smaller towns.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Specializations -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+            <h2 class="h3 fw-bold mb-3 mb-md-0">Popular Specializations</h2>
+            <a href="{% url 'doctors:specializations' %}" class="btn btn-outline-primary">
+                View All <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+        <div class="row g-4">
+            {% for specialization in specializations %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'search:doctor_search' %}?specialization={{ specialization.slug }}" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                                <i class="{{ specialization.icon }} text-primary"></i>
+                            </div>
+                            <h3 class="h6 fw-bold mb-2">{{ specialization.name }}</h3>
+                            <p class="small text-muted mb-0">
+                                <i class="bi bi-person-badge me-1"></i>
+                                {{ specialization.doctor_count }} Doctors
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Top Rated Doctors -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+            <h2 class="h3 fw-bold mb-3 mb-md-0">Top Rated Doctors</h2>
+            <a href="{% url 'search:doctor_search' %}" class="btn btn-outline-primary">
+                View All <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+        <div class="row g-4">
+            {% for doctor in top_doctors %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="position-relative">
+                                <img src="{{ doctor.profile_picture.url|default:'/static/img/default-doctor.png' }}" 
+                                     alt="Dr. {{ doctor.user.get_full_name }}" 
+                                     class="rounded-circle me-3" 
+                                     style="width: 64px; height: 64px; object-fit: cover;">
+                                {% if doctor.verified %}
+                                <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1">
+                                    <i class="bi bi-check-circle-fill text-white"></i>
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h3 class="h6 fw-bold mb-1">Dr. {{ doctor.user.get_full_name }}</h3>
+                                <p class="small text-muted mb-0">{{ doctor.specializations.first }}</p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-1">
+                                {% for i in "12345"|make_list %}
+                                <i class="bi bi-star{% if forloop.counter <= doctor.average_rating %}-fill{% endif %} text-warning me-1"></i>
+                                {% endfor %}
+                                <span class="small text-muted ms-2">({{ doctor.total_reviews }})</span>
+                            </div>
+                        </div>
+                        <p class="small mb-3">
+                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                            {{ doctor.clinic_city }}, {{ doctor.clinic_state }}
+                        </p>
+                        <p class="small mb-3">
+                            <i class="bi bi-mortarboard text-primary me-2"></i>
+                            {{ doctor.qualification }}
+                        </p>
+                        <a href="{% url 'doctors:doctor_detail' doctor.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-person-badge me-2"></i>View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+{% if not user.is_authenticated %}
+<section class="py-5 bg-primary bg-gradient text-center">
+    <div class="container">
+        <h2 class="display-6 fw-bold text-white mb-4">Are You a Doctor?</h2>
+        <p class="lead text-white-50 mb-4">Join our platform to reach more patients and grow your practice.</p>
+        <a href="{% url 'doctors:doctor_registration' %}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-person-plus me-2"></i>Register Now
+        </a>
+    </div>
+</section>
+{% elif user.is_superuser %}
+<section class="py-5 bg-dark bg-gradient text-center">
+    <div class="container">
+        <h2 class="display-6 fw-bold text-white mb-4">Welcome Back, {{ user.get_full_name }}</h2>
+        <p class="lead text-white-50 mb-4">Manage your site, check system status, and update content.</p>
+        <a href="{% url 'admin:index' %}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-gear me-2"></i>Go to Admin Panel
+        </a>
+    </div>
+</section>
+{% elif user.is_doctor %}
+<section class="py-5 bg-success bg-gradient text-center">
+    <div class="container">
+        <h2 class="display-6 fw-bold text-white mb-4">Welcome Back, Dr. {{ user.get_full_name }}</h2>
+        <p class="lead text-white-50 mb-4">Manage your profile, check your reviews, and update your availability.</p>
+        <a href="{% url 'doctors:doctor_dashboard' %}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+        </a>
+    </div>
+</section>
+{% else %}
+<section class="py-5 bg-primary bg-gradient text-center">
+    <div class="container">
+        <h2 class="display-6 fw-bold text-white mb-4">Are You a Healthcare Professional?</h2>
+        <p class="lead text-white-50 mb-4">Join our platform to reach more patients and grow your practice.</p>
+        <a href="{% url 'doctors:doctor_registration' %}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-person-plus me-2"></i>Register as Doctor
+        </a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

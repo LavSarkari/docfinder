@@ -1,0 +1,483 @@
+/* Custom variables */
+:root {
+    --bs-primary: #0d6efd;
+    --bs-primary-rgb: 13,110,253;
+    --bs-secondary: #6c757d;
+    --bs-success: #198754;
+    --bs-info: #0dcaf0;
+    --bs-warning: #ffc107;
+    --bs-danger: #dc3545;
+}
+
+/* Base styles */
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Icon animations */
+.icon-wrapper {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover .icon-wrapper {
+    transform: scale(1.1);
+}
+
+/* Search form styles */
+.search-form .form-control {
+    border: none;
+    padding: 0.75rem 1rem;
+}
+
+.search-form .input-group-text {
+    border: none;
+    background-color: transparent;
+}
+
+.search-form .form-control:focus {
+    box-shadow: none;
+}
+
+/* Rating stars */
+.rating .fas.fa-star {
+    color: #ffc107;
+}
+
+.rating .fas.fa-star-o {
+    color: #e2e8f0;
+}
+
+/* Doctor profile image */
+.doctor-profile-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+/* Verified badge */
+.verified-badge {
+    width: 24px;
+    height: 24px;
+    background: var(--bs-success);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bs-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-primary-dark);
+}
+
+/* Global Styles */
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #1cc88a;
+    --dark-color: #5a5c69;
+    --light-color: #f8f9fc;
+    --danger-color: #e74a3b;
+    --warning-color: #f6c23e;
+    --info-color: #36b9cc;
+}
+
+body {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+}
+
+/* Navigation */
+.navbar {
+    padding: 1rem 0;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 600;
+    padding: 0.5rem 1rem !important;
+}
+
+.nav-link.btn-primary {
+    padding: 0.5rem 1.5rem !important;
+    border-radius: 0.35rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 0.35rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.35rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Specialization Cards */
+.specialization-card {
+    border-left: 0.25rem solid var(--primary-color);
+}
+
+.specialization-card .icon {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+/* Search Section */
+.search-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+    color: white;
+    padding: 3rem 0;
+    border-radius: 0.35rem;
+    margin-bottom: 2rem;
+}
+
+/* Doctor Cards */
+.doctor-card {
+    border-left: 0.25rem solid var(--secondary-color);
+}
+
+.doctor-card .rating {
+    color: var(--warning-color);
+}
+
+/* Forms */
+.form-control {
+    border-radius: 0.35rem;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Footer */
+footer {
+    background-color: white;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+footer a {
+    color: var(--dark-color);
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+footer a:hover {
+    color: var(--primary-color);
+}
+
+.social-links a {
+    color: var(--dark-color);
+    font-size: 1.25rem;
+    transition: color 0.2s ease-in-out;
+}
+
+.social-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    .search-section {
+        padding: 2rem 0;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 0.25rem solid rgba(78, 115, 223, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Features section enhancements */
+.features .card {
+    transition: all 0.3s ease;
+}
+
+.features .card:hover {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+/* Hero section background pattern */
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25,0 L30,0 L30,25 L55,25 L55,30 L30,30 L30,55 L25,55 L25,30 L0,30 L0,25 L25,25 Z' fill='%23ffffff' fill-opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Improve text readability */
+.text-white.opacity-75 {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.display-4 {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Add subtle animation to search button */
+.btn-primary {
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Enhance input fields */
+.input-group-text {
+    border-right: none;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #e5e7eb;
+}
+
+/* Add gradient to section backgrounds */
+.features {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.specializations {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+/* Transitions */
+.transition-300 {
+    transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Custom Form Styles */
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+}
+
+/* Search Components */
+.search-box-wrapper {
+    transition: all 0.3s ease;
+}
+
+.search-input {
+    min-height: 48px;
+}
+
+@media (max-width: 768px) {
+    .search-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .search-input-wrapper {
+        margin-bottom: 0.5rem;
+    }
+    
+    .search-button {
+        width: 100%;
+        margin-top: 0.5rem;
+        justify-content: center;
+    }
+
+    /* General mobile adjustments */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    h1.display-4 {
+        font-size: 2.5rem;
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+}
+
+/* Doctor Card Styles */
+.doctor-card {
+    transition: all 0.3s ease;
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.doctor-image {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.doctor-verified-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--bs-success);
+    border-radius: 50%;
+    padding: 0.25rem;
+}
+
+/* Rating Stars */
+.star-filled {
+    color: #FFD700;
+}
+
+.star-empty {
+    color: #E0E0E0;
+}
+
+/* Global Search Bar */
+.global-search-input {
+    height: 38px;
+    padding-right: 40px;
+    transition: all 0.3s;
+}
+
+.global-search-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    border-color: transparent;
+}
+
+.global-search-btn {
+    color: #6c757d;
+    z-index: 5;
+}
+
+.global-search-btn:hover {
+    color: #0d6efd;
+}
+
+/* Default images for search */
+.search-placeholder {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100px;
+    height: 200px;
+}
+
+.empty-search-placeholder {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='8' y1='12' x2='16' y2='12'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100px;
+    height: 200px;
+} 

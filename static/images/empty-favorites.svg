@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle fill="#F8F9FA" cx="100" cy="100" r="100"></circle>
+        
+        <!-- Heart -->
+        <path d="M100,150 C100,150 60,125 40,100 C20,75 30,40 60,40 C75,40 90,50 100,70 C110,50 125,40 140,40 C170,40 180,75 160,100 C140,125 100,150 100,150 Z" 
+              fill="#E9ECEF" stroke="#DEE2E6" stroke-width="2"></path>
+        
+        <!-- Slash -->
+        <line x1="40" y1="160" x2="160" y2="40" stroke="#DC3545" stroke-width="6" stroke-linecap="round"></line>
+    </g>
+</svg> 

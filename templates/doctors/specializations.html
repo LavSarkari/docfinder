@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Medical Specializations - DoctorFinder{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5 animate-fade-in">
+        <h1 class="display-4 fw-bold mb-3">Medical Specializations</h1>
+        <p class="lead text-muted">Browse doctors by their area of expertise</p>
+        <div class="mt-4">
+            <a href="{% url 'search:doctor_search' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-search me-2"></i>Search All Doctors
+            </a>
+        </div>
+    </div>
+
+    <!-- All Specializations -->
+    <div class="row g-4 mb-5">
+        {% for specialization in specializations %}
+        <div class="col-md-4 animate-fade-in" style="animation-delay: {{ forloop.counter|multiply:0.1 }}s">
+            <div class="card h-100 specialization-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="{{ specialization.icon }} fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="h5 mb-0">{{ specialization.name }}</h3>
+                    </div>
+                    <p class="text-muted mb-3">{{ specialization.description|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">
+                            <i class="bi bi-person-badge me-1"></i>
+                            {{ specialization.doctor_count }} Doctors
+                        </span>
+                        <a href="{% url 'search:specialization_search' specialization.slug %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i>View Doctors
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Popular Specializations -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 mb-0">Popular Specializations</h2>
+            <a href="{% url 'search:doctor_search' %}" class="btn btn-link text-primary">
+                View All <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row g-4">
+            {% for specialization in popular_specializations %}
+            <div class="col-md-3 animate-fade-in" style="animation-delay: {{ forloop.counter|multiply:0.1 }}s">
+                <a href="{% url 'search:specialization_search' specialization.slug %}" class="text-decoration-none">
+                    <div class="card h-100 specialization-card">
+                        <div class="card-body text-center">
+                            <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3">
+                                <i class="{{ specialization.icon }} fa-2x text-primary"></i>
+                            </div>
+                            <h3 class="h6 mb-2">{{ specialization.name }}</h3>
+                            <p class="small text-muted mb-0">
+                                <i class="bi bi-person-badge me-1"></i>
+                                {{ specialization.doctor_count }} Doctors
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- How to Choose a Specialist -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h2 class="h4 mb-4 text-center">How to Choose the Right Specialist</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-clipboard-list fa-lg text-primary"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h5 mb-2">1. Understand Your Needs</h3>
+                            <p class="text-muted mb-0">Identify your specific health concerns and symptoms to determine which specialist is best suited for your condition.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-graduation-cap fa-lg text-primary"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h5 mb-2">2. Check Qualifications</h3>
+                            <p class="text-muted mb-0">Look for board-certified specialists with relevant experience and proper credentials in their field.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-star fa-lg text-primary"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h5 mb-2">3. Read Reviews</h3>
+                            <p class="text-muted mb-0">Consider patient reviews and ratings to understand the doctor's approach and patient satisfaction.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-map-marker-alt fa-lg text-primary"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="h5 mb-2">4. Consider Location</h3>
+                            <p class="text-muted mb-0">Choose a specialist whose clinic is conveniently located and accessible for regular visits if needed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load account %}
+
+{% block title %}Confirm Email - DoctorFinder{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <!-- Email Icon -->
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-4 mx-auto mb-4" style="width: 100px; height: 100px;">
+                        <i class="bi bi-envelope-check fs-1 text-primary"></i>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="h3 fw-bold mb-4">{% trans "Confirm Email Address" %}</h1>
+
+                    {% if confirmation %}
+                        <!-- Message -->
+                        <p class="text-muted mb-4">
+                            {% user_display confirmation.email_address.user as user_display %}
+                            {% blocktrans with confirmation.email_address.email as email %}Please confirm that <strong>{{ email }}</strong> is an email address for user <strong>{{ user_display }}</strong>.{% endblocktrans %}
+                        </p>
+
+                        <!-- Form -->
+                        <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-check-circle me-2"></i>{% trans "Confirm" %}
+                            </button>
+                        </form>
+                    {% else %}
+                        <!-- Error Message -->
+                        <div class="alert alert-danger border-0 rounded-3 mb-4">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            {% url 'account_email' as email_url %}
+                            {% blocktrans %}This email confirmation link has expired or is invalid. Please <a href="{{ email_url }}" class="alert-link">request a new email confirmation</a>.{% endblocktrans %}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-grid gap-3">
+                            <a href="/" class="btn btn-outline-primary">
+                                <i class="bi bi-house me-2"></i>{% trans "Return to Home" %}
+                            </a>
+                            <a href="{% url 'account_login' %}" class="btn btn-link text-muted text-decoration-none">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>{% trans "Sign In" %}
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Help Text -->
+                    <p class="small text-muted mt-4 mb-0">
+                        {% trans "Need help?" %} <a href="{% url 'pages:contact' %}" class="text-decoration-none">{% trans "Contact our support team" %}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

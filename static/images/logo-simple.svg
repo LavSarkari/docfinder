@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="40" viewBox="0 0 200 40" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Medical Cross Icon -->
+    <path fill="#2563eb" d="M12,4 L18,4 L18,12 L26,12 L26,18 L18,18 L18,26 L12,26 L12,18 L4,18 L4,12 L12,12 Z"/>
+    
+    <!-- Doctor Text -->
+    <path fill="#2563eb" d="M45,8 h4 v16 h-4 v-16 M35,8 h4 v16 h-4 v-16 M35,8 h14 v4 h-14 v-4 M35,16 h12 v4 h-12 v-4"/>
+    
+    <!-- Finder Text -->
+    <path fill="#1e40af" d="M95,8 h4 v16 h-4 v-16 M95,8 h14 v4 h-14 v-4 M95,16 h12 v4 h-12 v-4 M109,16 v8 h4 v-8 h-4"/>
+</svg> 

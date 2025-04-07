@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="40" viewBox="0 0 200 40" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .logo-text { font-family: Arial, sans-serif; font-weight: bold; }
+        .doctor { fill: #2563eb; }
+        .finder { fill: #1e40af; }
+        .icon { fill: #2563eb; }
+    </style>
+    
+    <!-- Medical Cross Icon -->
+    <g class="icon" transform="translate(0,0)">
+        <path d="M12,4 L18,4 L18,12 L26,12 L26,18 L18,18 L18,26 L12,26 L12,18 L4,18 L4,12 L12,12 Z"/>
+    </g>
+    
+    <!-- Text -->
+    <text x="35" y="24" class="logo-text doctor">Doctor</text>
+    <text x="95" y="24" class="logo-text finder">Finder</text>
+</svg> 
